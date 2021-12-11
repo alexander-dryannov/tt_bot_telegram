@@ -1,0 +1,7 @@
+python-dotenv
+transitions
+aiogram
+aiohttp
+requests
+pyment
+pytelegrambotapi
