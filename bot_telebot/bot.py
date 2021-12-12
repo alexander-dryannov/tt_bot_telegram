@@ -40,6 +40,24 @@ def handler_my_state(_):
             return False
 
 
+def data_definition(message):
+    match message.text.lower():
+        case 'маленькая' | 'маленькую':
+            data['size'] = 'маленькую'
+        case 'большая' | 'большую':
+            data['size'] = 'большую'
+        case 'наличка' | 'наличные' | 'наличными':
+            data['payment'] = 'наличными'
+        case 'картой' | 'карта':
+            data['payment'] = 'картой'
+        case 'отмена' | 'отменить':
+            my_state.cancel()
+            bot.send_message(message.chat.id, 'Заказ отменен.')
+        case _:
+            my_state.cancel()
+            bot.send_message(message.chat.id, 'Не верный ввод. Заказ отменен.')
+
+
 @bot.message_handler(commands=['start'])
 def welcome_message(message):
     my_state.wake_up()
@@ -48,14 +66,7 @@ def welcome_message(message):
 
 @bot.message_handler(func=handler_my_state)
 def get_size(message):
-    match message.text.lower():
-        case 'маленькая' | 'маленькую':
-            data['size'] = 'маленькую'
-        case 'большая' | 'большую':
-            data['size'] = 'большую'
-        case _:
-            my_state.cancel()
-            bot.send_message(message.chat.id, 'Не верный ввод.')
+    data_definition(message)
     my_state.operate_1()
     msg = bot.send_message(message.chat.id, 'Наличка или карта?')
     bot.register_next_step_handler(msg, get_pyment)
@@ -63,14 +74,7 @@ def get_size(message):
 
 @bot.message_handler(func=handler_my_state)
 def get_pyment(message):
-    match message.text.lower():
-        case 'наличка' | 'наличные' | 'наличными':
-            data['payment'] = 'наличными'
-        case 'картой' | 'карта':
-            data['payment'] = 'картой'
-        case _:
-            my_state.cancel()
-            bot.send_message(message.chat.id, 'Не верный ввод.')
+    data_definition(message)
     my_state.operate_2()
     msg = bot.send_message(message.chat.id, f'Вы хотите {data["size"]} пиццу, оплата {data["payment"]}, верно?')
     bot.register_next_step_handler(msg, confirm)
