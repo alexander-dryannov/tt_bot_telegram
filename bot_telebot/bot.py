@@ -50,6 +50,18 @@ def data_definition(message):
             data['payment'] = 'наличными'
         case 'картой' | 'карта':
             data['payment'] = 'картой'
+        case 'да' | 'yes' | 'д' | 'y':
+            data['confirm'] = True
+            data['date'] = datetime.now()
+            my_state.operate_3()
+            write_to_database(data)
+            bot.send_message(message.chat.id, 'Готово.')
+        case 'нет' | 'no' | 'н' | 'n':
+            my_state.operate_3()
+            data['confirm'] = False
+            data['date'] = datetime.now()
+            write_to_database(data)
+            bot.send_message(message.chat.id, 'Не подтверждено. Заказ отменен.')
         case 'отмена' | 'отменить':
             my_state.cancel()
             bot.send_message(message.chat.id, 'Заказ отменен.')
@@ -82,23 +94,7 @@ def get_pyment(message):
 
 @bot.message_handler(func=handler_my_state)
 def confirm(message):
-    match message.text.lower():
-        case 'да' | 'yes' | 'д' | 'y':
-            data['confirm'] = True
-            data['date'] = datetime.now()
-            my_state.operate_3()
-            write_to_database(data)
-            bot.send_message(message.chat.id, 'Готово.')
-
-        case 'нет' | 'no' | 'н' | 'n':
-            my_state.operate_3()
-            data['confirm'] = False
-            data['date'] = datetime.now()
-            write_to_database(data)
-            bot.send_message(message.chat.id, 'Не подтверждено.')
-        case _:
-            my_state.cancel()
-            bot.send_message(message.chat.id, 'Не верный ввод.')
+    data_definition(message)
 
 
 bot.infinity_polling(logger_level=10)
