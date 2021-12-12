@@ -1,5 +1,9 @@
 # Бот телегам "Заказ пиццы".
 
+Username бота:
+
+    @testtaskdialogue_bot
+
 ## Зависимости
 
 ```shell
