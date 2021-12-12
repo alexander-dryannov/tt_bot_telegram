@@ -11,6 +11,7 @@ aiohttp = "*"
 requests = "*"
 pytelegrambotapi = "*"
 payment = "*"
+psycopg2 = "*"
 
 [dev-packages]
 

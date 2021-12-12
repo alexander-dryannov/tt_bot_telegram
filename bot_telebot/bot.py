@@ -1,7 +1,10 @@
-import telebot
-from os import getenv
-from dotenv import load_dotenv
+from database import write_to_database
 from transitions import Machine
+from dotenv import load_dotenv
+from datetime import datetime
+from os import getenv
+import telebot
+
 
 load_dotenv()
 
@@ -22,7 +25,7 @@ bot = telebot.TeleBot(getenv('TOKEN'))
 
 my_state = MyState()
 
-data = {}
+data = {'messenger': 'telegram'}
 
 
 def handler_my_state(_):
@@ -77,11 +80,17 @@ def get_pyment(message):
 def confirm(message):
     match message.text.lower():
         case 'да' | 'yes' | 'д' | 'y':
-            data['confirm'] = 'Подтверждено'
+            data['confirm'] = True
+            data['date'] = datetime.now()
             my_state.operate_3()
+            write_to_database(data)
             bot.send_message(message.chat.id, 'Готово.')
+
         case 'нет' | 'no' | 'н' | 'n':
-            my_state.cancel()
+            my_state.operate_3()
+            data['confirm'] = False
+            data['date'] = datetime.now()
+            write_to_database(data)
             bot.send_message(message.chat.id, 'Не подтверждено.')
         case _:
             my_state.cancel()

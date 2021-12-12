@@ -1,7 +1,7 @@
+pytelegrambotapi
 python-dotenv
 transitions
-aiogram
-aiohttp
+psycopg2
 requests
-pyment
-pytelegrambotapi
+aiohttp
+aiogram
